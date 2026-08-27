@@ -1,0 +1,16 @@
+{
+  "name": "studyspace-backend",
+  "version": "1.0.0",
+  "description": "Backend server for StudySpace - Smart Study Room Management System",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "seed": "node seed.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "mysql2": "^3.9.7",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5"
+  }
+}
