@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - StudySpace</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color:#1b3a63;">
+        <div class="container">
+            <a class="navbar-brand" href="dashboard.html"><i class="bi bi-book-half"></i> StudySpace</a>
+            <div class="d-flex align-items-center">
+                <span id="welcomeText" class="text-white me-3"></span>
+                <button id="logoutBtn" class="btn btn-outline-light btn-sm">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container my-4">
+
+        <!-- ===================== SUMMARY CARDS ===================== -->
+        <div class="row g-3 mb-4">
+            <div class="col-6 col-md-3">
+                <div class="feature-card">
+                    <i class="bi bi-door-open"></i>
+                    <h4 id="statTotalRooms">0</h4>
+                    <small>Total Bookable Rooms</small>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="feature-card">
+                    <i class="bi bi-check-circle text-success"></i>
+                    <h4 id="statAvailable">0</h4>
+                    <small>Available Now</small>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="feature-card">
+                    <i class="bi bi-broadcast text-danger"></i>
+                    <h4 id="statRunning">0</h4>
+                    <small>Classes Running Now</small>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="feature-card">
+                    <i class="bi bi-calendar-week"></i>
+                    <h4 id="statUpcoming">0</h4>
+                    <small>Upcoming Bookings</small>
+                </div>
+            </div>
+        </div>
+        <p class="text-muted mb-4">Total Student Capacity across all rooms: <strong id="statCapacity">0</strong> students</p>
+
+        <!-- ===================== TABS ===================== -->
+        <ul class="nav nav-tabs mb-4" id="mainTabs">
+            <li class="nav-item">
+                <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#roomsTab" type="button">Rooms</button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#todayTab" type="button">Today's Schedule</button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#upcomingTab" type="button">Upcoming Bookings</button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#myBookingsTab" type="button">My Bookings</button>
+            </li>
+            <li class="nav-item d-none" id="adminTabItem">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#adminTab" type="button">Manage Rooms (Admin)</button>
+            </li>
+            <li class="nav-item d-none" id="requestsTabItem">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#requestsTab" type="button">
+                    Booking Requests <span id="pendingCountBadge" class="badge bg-danger ms-1 d-none">0</span>
+                </button>
+            </li>
+        </ul>
+
+        <div class="tab-content">
+
+            <!-- ===================== ROOMS TAB ===================== -->
+            <div class="tab-pane fade show active" id="roomsTab">
+
+                <!-- Filters -->
+                <div class="row g-2 mb-4">
+                    <div class="col-md-4">
+                        <input type="text" id="searchInput" class="form-control" placeholder="Search room name...">
+                    </div>
+                    <div class="col-md-3">
+                        <select id="floorFilter" class="form-select">
+                            <option value="">All Floors</option>
+                            <option value="2nd Floor">2nd Floor</option>
+                            <option value="Ground/Lower">Ground/Lower</option>
+                            <option value="3rd Floor">3rd Floor</option>
+                            <option value="4th Floor">4th Floor</option>
+                            <option value="5th Floor">5th Floor</option>
+                            <option value="Large Rooms">Large Rooms</option>
+                            <option value="Extensions">Extensions</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <select id="typeFilter" class="form-select">
+                            <option value="">All Types</option>
+                            <option value="CLASSROOM">Classroom</option>
+                            <option value="LAB">Lab</option>
+                            <option value="LARGE ROOM">Large Room</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <select id="statusFilter" class="form-select">
+                            <option value="">All Statuses</option>
+                            <option value="AVAILABLE">Available</option>
+                            <option value="BOOKED">Booked</option>
+                            <option value="CLASS RUNNING">Class Running</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Room Cards -->
+                <div class="row g-3" id="roomCardsContainer"></div>
+            </div>
+
+            <!-- ===================== TODAY'S SCHEDULE TAB ===================== -->
+            <div class="tab-pane fade" id="todayTab">
+                <div class="feature-card text-start">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead>
+                                <tr>
+                                    <th>Room</th><th>Floor</th><th>Type</th><th>Teacher</th>
+                                    <th>Subject</th><th>Students</th><th>Start</th><th>End</th><th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="todayScheduleBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===================== UPCOMING BOOKINGS TAB ===================== -->
+            <div class="tab-pane fade" id="upcomingTab">
+                <div class="feature-card text-start">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead>
+                                <tr>
+                                    <th>Room</th><th>Teacher</th><th>Subject</th><th>Date</th>
+                                    <th>Start</th><th>End</th><th>Students</th><th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="upcomingBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===================== MY BOOKINGS TAB ===================== -->
+            <div class="tab-pane fade" id="myBookingsTab">
+                <div class="feature-card text-start">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead>
+                                <tr>
+                                    <th>Room</th><th>Subject</th><th>Date</th><th>Start</th>
+                                    <th>End</th><th>Students</th><th>Status</th><th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="myBookingsBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===================== ADMIN TAB (Update 1/2, extended) ===================== -->
+            <div class="tab-pane fade" id="adminTab">
+                <div class="row">
+                    <div class="col-md-4 mb-4">
+                        <div class="feature-card text-start">
+                            <h5>Add / Update Room</h5>
+                            <form id="addRoomForm">
+                                <input type="hidden" id="editingRoomId" value="">
+
+                                <div class="mb-2">
+                                    <label class="form-label">Room Name</label>
+                                    <input type="text" class="form-control" id="room_name" required>
+                                </div>
+                                <div class="mb-2">
+                                    <label class="form-label">Room Number</label>
+                                    <input type="text" class="form-control" id="room_number" required>
+                                </div>
+                                <div class="mb-2">
+                                    <label class="form-label">Capacity</label>
+                                    <input type="number" class="form-control" id="capacity" min="1" required>
+                                </div>
+                                <div class="mb-2">
+                                    <label class="form-label">Floor</label>
+                                    <select class="form-select" id="floor">
+                                        <option value="2nd Floor">2nd Floor</option>
+                                        <option value="Ground/Lower">Ground/Lower</option>
+                                        <option value="3rd Floor">3rd Floor</option>
+                                        <option value="4th Floor">4th Floor</option>
+                                        <option value="5th Floor">5th Floor</option>
+                                        <option value="Large Rooms">Large Rooms</option>
+                                        <option value="Extensions">Extensions</option>
+                                    </select>
+                                </div>
+                                <div class="mb-2">
+                                    <label class="form-label">Room Type</label>
+                                    <select class="form-select" id="room_type">
+                                        <option value="CLASSROOM">Classroom</option>
+                                        <option value="LAB">Lab</option>
+                                        <option value="LARGE ROOM">Large Room</option>
+                                    </select>
+                                </div>
+                                <div class="mb-2">
+                                    <label class="form-label">Location</label>
+                                    <input type="text" class="form-control" id="location">
+                                </div>
+                                <div class="mb-2">
+                                    <label class="form-label">Status</label>
+                                    <select class="form-select" id="status">
+                                        <option value="available">Available</option>
+                                        <option value="unavailable">Unavailable</option>
+                                    </select>
+                                </div>
+
+                                <button type="submit" id="addRoomBtn" class="btn btn-primary w-100 mt-2">Add Room</button>
+                                <p id="roomFormMessage" class="form-message"></p>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="col-md-8">
+                        <div class="feature-card text-start">
+                            <h5>All Study Rooms</h5>
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th><th>Name</th><th>Floor</th><th>Type</th>
+                                            <th>Capacity</th><th>Status</th><th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="roomTableBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===================== BOOKING REQUESTS TAB (Admin, Part 4) ===================== -->
+            <div class="tab-pane fade" id="requestsTab">
+                <p class="text-muted">Students' booking requests wait here until you approve or reject them. Admin bookings are confirmed instantly and don't appear in this list.</p>
+                <div class="feature-card text-start">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead>
+                                <tr>
+                                    <th>Room</th><th>Requested By</th><th>Teacher</th><th>Subject</th>
+                                    <th>Date</th><th>Start</th><th>End</th><th>Students</th><th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="pendingRequestsBody"></tbody>
+                        </table>
+                        <p id="noPendingMessage" class="text-muted d-none">No pending booking requests right now.</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ===================== ROOM DETAILS MODAL ===================== -->
+    <div class="modal fade" id="roomDetailsModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Room Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="roomDetailsBody"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="detailsBookBtn">Book This Room</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===================== BOOK ROOM MODAL ===================== -->
+    <div class="modal fade" id="bookRoomModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Book a Room</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="bookRoomForm">
+                        <input type="hidden" id="book_room_id">
+                        <p class="mb-2"><strong>Room:</strong> <span id="book_room_name"></span></p>
+
+                        <div class="mb-2">
+                            <label class="form-label">Teacher / User Name</label>
+                            <input type="text" class="form-control" id="book_teacher_name" required>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">Subject / Class Name</label>
+                            <input type="text" class="form-control" id="book_subject_name" required>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">Date</label>
+                            <input type="date" class="form-control" id="book_date" required>
+                        </div>
+                        <div class="row">
+                            <div class="col-6 mb-2">
+                                <label class="form-label">Start Time</label>
+                                <input type="time" class="form-control" id="book_start_time" required>
+                            </div>
+                            <div class="col-6 mb-2">
+                                <label class="form-label">End Time</label>
+                                <input type="time" class="form-control" id="book_end_time" required>
+                            </div>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">Number of Students</label>
+                            <input type="number" class="form-control" id="book_student_count" min="1" required>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">Purpose</label>
+                            <input type="text" class="form-control" id="book_purpose">
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 mt-2">Confirm Booking</button>
+                        <p id="bookFormMessage" class="form-message"></p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>&copy; 2026 StudySpace - University Web Development Project</footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/dashboard.js"></script>
+</body>
+</html>
